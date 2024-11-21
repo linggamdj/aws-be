@@ -75,24 +75,17 @@ const getNoteByIdHandler = (request, h) => {
 const editNoteByIdHandler = (request, h) => {
   const { id } = request.params;
   const { title, tags, body } = request.payload;
-  const createdAt = new Date().toISOString();
-  const updatedAt = createdAt;
+  const updatedAt = new Date().toISOString();
 
-  const isExist = notes.filter((note) => note.id === id).length;
+  const noteIndex = notes.findIndex((note) => note.id === id);
 
-  if (isExist) {
-    const newNotes = notes.map((note) => {
-      if (note.id === id) {
-        return { ...note, title, tags, body, createdAt, updatedAt };
-      }
-      return note;
-    });
-
-    console.log(newNotes);
+  if (noteIndex !== -1) {
+    notes[noteIndex] = { ...notes[noteIndex], title, tags, body, updatedAt };
 
     const response = h.response({
       status: 'success',
       message: 'Catatan berhasil diubah',
+      data: notes[noteIndex],
     });
 
     response.code(200);
@@ -114,7 +107,6 @@ const deleteNoteByIdHandler = (request, h) => {
   const { id } = request.params;
 
   const noteIndex = notes.findIndex((note) => note.id === id);
-  console.log(noteIndex);
 
   if (noteIndex !== -1) {
     notes.splice(noteIndex, 1);
